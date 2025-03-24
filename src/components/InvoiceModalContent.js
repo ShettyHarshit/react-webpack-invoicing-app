@@ -1,6 +1,6 @@
 import { Table } from "antd";
 import React from "react";
-import { renderDate, renderTag } from "../helpers/uiHelpers";
+import { formatAmount, renderDate, renderTag } from "../helpers/uiHelpers";
 
 function InvoiceModalContent({ record }) {
   return (
@@ -66,7 +66,7 @@ function InvoiceModalContent({ record }) {
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={1} />
                 <Table.Summary.Cell index={2} className="font-semibold">
-                  ₹{total}
+                  {formatAmount(total)}
                 </Table.Summary.Cell>
               </Table.Summary.Row>
             );
@@ -82,7 +82,7 @@ function InvoiceModalContent({ record }) {
             title="Rate"
             dataIndex="rate"
             key="rate"
-            render={(rate) => `₹${rate}`}
+            render={(rate) => formatAmount(rate)}
           />
         </Table>
       </div>

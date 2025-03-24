@@ -12,6 +12,7 @@ import {
 import React, { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { InvoiceStatuses } from "../constants/InvoiceStatuses";
+import { formatAmount, renderTag } from "../helpers/uiHelpers";
 import { InvoiceStore } from "../stores/invoiceStore";
 
 const InvoiceForm = ({ handleAfterSubmit }) => {
@@ -89,7 +90,7 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
                 InvoiceStatuses.OVERDUE,
               ].map((status) => (
                 <Select.Option key={status} value={status}>
-                  {status}
+                  {renderTag(status)}
                 </Select.Option>
               ))}
             </Select>
@@ -221,9 +222,8 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
                       form.getFieldValue(["lineItems", field.name]) || {};
                     return (
                       <span>
-                        ₹
-                        {((values.quantity || 0) * (values.rate || 0)).toFixed(
-                          2
+                        {formatAmount(
+                          (values.quantity || 0) * (values.rate || 0).toFixed(2)
                         )}
                       </span>
                     );
@@ -260,7 +260,7 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
 
       <Form.Item>
         <Button type="primary" htmlType="submit" className="mt-2">
-          Submit
+          Add Invoice
         </Button>
       </Form.Item>
 

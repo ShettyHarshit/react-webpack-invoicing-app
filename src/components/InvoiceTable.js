@@ -1,10 +1,10 @@
 import { Button, message, Modal, Space, Table } from "antd";
 import React from "react";
 import { InvoiceStatuses } from "../constants/InvoiceStatuses";
-import { renderDate, renderTag } from "../helpers/uiHelpers";
+import { formatAmount, renderDate, renderTag } from "../helpers/uiHelpers";
 import { InvoiceStore } from "../stores/invoiceStore";
 
-function InvoiceTable({ invoices, onModalOpen }) {
+function InvoiceTable({ invoices, onModalOpen, refetchInvoices }) {
   return (
     <div>
       <Table dataSource={invoices} rowKey="id">
@@ -26,7 +26,7 @@ function InvoiceTable({ invoices, onModalOpen }) {
           title="Amount"
           dataIndex="totalAmount"
           key="totalAmount"
-          render={(totalAmount) => `₹${totalAmount}`}
+          render={(totalAmount) => formatAmount(totalAmount)}
         />
         <Table.Column
           title="Status"
@@ -54,8 +54,7 @@ function InvoiceTable({ invoices, onModalOpen }) {
                       `Invoice ${record.invoiceNumber} marked as paid`
                     );
                     InvoiceStore.updateInvoiceStatus(record.id, "paid");
-                    const fetchedInvoices = InvoiceStore.getInvoices();
-                    setInvoices(fetchedInvoices);
+                    refetchInvoices();
                   }}
                 >
                   Mark as Paid
@@ -68,8 +67,7 @@ function InvoiceTable({ invoices, onModalOpen }) {
                       `Invoice ${record.invoiceNumber} marked as overdue`
                     );
                     InvoiceStore.updateInvoiceStatus(record.id, "overdue");
-                    const fetchedInvoices = InvoiceStore.getInvoices();
-                    setInvoices(fetchedInvoices);
+                    refetchInvoices();
                   }}
                 >
                   Mark as Overdue
@@ -82,8 +80,7 @@ function InvoiceTable({ invoices, onModalOpen }) {
                       `Invoice sent successfully for ${record.invoiceNumber} to ${record.clientEmail}`
                     );
                     InvoiceStore.updateInvoiceStatus(record.id, "sent");
-                    const fetchedInvoices = InvoiceStore.getInvoices();
-                    setInvoices(fetchedInvoices);
+                    refetchInvoices();
                   }}
                 >
                   Send Invoice
@@ -96,8 +93,7 @@ function InvoiceTable({ invoices, onModalOpen }) {
                     title: "Are you sure you want to delete this invoice?",
                     onOk() {
                       InvoiceStore.deleteInvoice(record.id);
-                      const fetchedInvoices = InvoiceStore.getInvoices();
-                      setInvoices(fetchedInvoices);
+                      refetchInvoices();
                       message.success(
                         `Invoice ${record.invoiceNumber} deleted successfully`
                       );
