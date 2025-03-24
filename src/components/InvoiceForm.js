@@ -39,42 +39,25 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
       0
     );
 
-  const addRandomValues = () => {
-    const randomLineItems = Array.from({ length: 2 }, () => ({
-      description: `Item ${Math.floor(Math.random() * 100)}`,
-      quantity: Math.floor(Math.random() * 10) + 1,
-      rate: (Math.random() * 100).toFixed(2),
-    }));
-
-    form.setFieldsValue({
-      invoiceNumber: `INV-${Math.floor(Math.random() * 10000)}`,
-      status: "draft",
-      invoiceDate: null,
-      dueDate: null,
-      notes: "These are random notes.",
-      clientName: `Client ${Math.floor(Math.random() * 100)}`,
-      clientEmail: `client${Math.floor(Math.random() * 100)}@example.com`,
-      clientAddress: `Address ${Math.floor(Math.random() * 100)}`,
-      lineItems: randomLineItems,
-    });
-  };
-
   useEffect(() => {
     form.setFieldsValue({ totalAmount: calculateTotal().toFixed(2) });
   }, [lineItems, form]);
 
   return (
     <Form form={form} onFinish={onFinish} layout="vertical">
-      <Form.Item
-        label="Invoice Number"
-        name="invoiceNumber"
-        rules={[{ required: true, message: "Please input the invoice number" }]}
-      >
-        <Input className="w-full p-2 border border-gray-300 rounded" />
-      </Form.Item>
-
       <Row gutter={[12]}>
-        <Col span={8}>
+        <Col span={6}>
+          <Form.Item
+            label="Invoice Number"
+            name="invoiceNumber"
+            rules={[
+              { required: true, message: "Please input the invoice number" },
+            ]}
+          >
+            <Input className="w-full p-2 border border-gray-300 rounded" />
+          </Form.Item>
+        </Col>
+        <Col span={6}>
           <Form.Item
             label="Status"
             name="status"
@@ -94,7 +77,7 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
             </Select>
           </Form.Item>
         </Col>
-        <Col span={8}>
+        <Col span={6}>
           <Form.Item
             label="Invoice Date"
             name="invoiceDate"
@@ -105,7 +88,7 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
             <DatePicker className="w-full p-2 border border-gray-300 rounded" />
           </Form.Item>
         </Col>
-        <Col span={8}>
+        <Col span={6}>
           <Form.Item
             label="Due Date"
             name="dueDate"
@@ -115,12 +98,7 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
           </Form.Item>
         </Col>
       </Row>
-      <Form.Item label="Notes" name="notes" rules={[{ required: false }]}>
-        <Input.TextArea
-          className="w-full p-2 border border-gray-300 rounded"
-          placeholder="Add any notes here, including payment instructions, where to send checks, etc."
-        />
-      </Form.Item>
+
       <Row gutter={[12]}>
         <Col span={12}>
           <Form.Item
@@ -153,6 +131,12 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
         rules={[{ required: true, message: "Please input the client address" }]}
       >
         <Input.TextArea className="w-full p-2 border border-gray-300 rounded" />
+      </Form.Item>
+      <Form.Item label="Notes" name="notes" rules={[{ required: false }]}>
+        <Input.TextArea
+          className="w-full p-2 border border-gray-300 rounded"
+          placeholder="Add any notes here, including payment instructions, where to send checks, etc."
+        />
       </Form.Item>
       <Form.List name="lineItems">
         {(fields, { add, remove }) => (
@@ -261,10 +245,6 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
           Add Invoice
         </Button>
       </Form.Item>
-
-      <Button type="primary" onClick={addRandomValues} className="mt-2">
-        Add Random Values
-      </Button>
     </Form>
   );
 };

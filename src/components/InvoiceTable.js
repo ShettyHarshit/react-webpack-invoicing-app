@@ -33,6 +33,11 @@ function InvoiceTable({ invoices, onModalOpen, refetchInvoices }) {
           dataIndex="status"
           key="status"
           render={renderTag}
+          filters={Object.keys(InvoiceStatuses).map((status) => ({
+            text: InvoiceStatuses[status].toUpperCase(),
+            value: InvoiceStatuses[status],
+          }))}
+          onFilter={(value, record) => record.status.indexOf(value) === 0}
         />
         <Table.Column
           title="Action"
@@ -53,7 +58,10 @@ function InvoiceTable({ invoices, onModalOpen, refetchInvoices }) {
                     message.success(
                       `Invoice ${record.invoiceNumber} marked as paid`
                     );
-                    InvoiceStore.updateInvoiceStatus(record.id, "paid");
+                    InvoiceStore.updateInvoiceStatus(
+                      record.id,
+                      InvoiceStatuses.PAID
+                    );
                     refetchInvoices();
                   }}
                 >
@@ -66,7 +74,10 @@ function InvoiceTable({ invoices, onModalOpen, refetchInvoices }) {
                     message.warning(
                       `Invoice ${record.invoiceNumber} marked as overdue`
                     );
-                    InvoiceStore.updateInvoiceStatus(record.id, "overdue");
+                    InvoiceStore.updateInvoiceStatus(
+                      record.id,
+                      InvoiceStatuses.OVERDUE
+                    );
                     refetchInvoices();
                   }}
                 >
@@ -79,7 +90,10 @@ function InvoiceTable({ invoices, onModalOpen, refetchInvoices }) {
                     message.success(
                       `Invoice sent successfully for ${record.invoiceNumber} to ${record.clientEmail}`
                     );
-                    InvoiceStore.updateInvoiceStatus(record.id, "sent");
+                    InvoiceStore.updateInvoiceStatus(
+                      record.id,
+                      InvoiceStatuses.SENT
+                    );
                     refetchInvoices();
                   }}
                 >
