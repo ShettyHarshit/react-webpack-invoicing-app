@@ -1,7 +1,5 @@
-import { EventEmitter } from "events";
 import { Dispatcher } from "flux";
 
-const invoiceStore = new EventEmitter();
 let invoices = JSON.parse(localStorage.getItem("invoices")) || [];
 
 const saveInvoicesToLocalStorage = () => {
@@ -16,15 +14,6 @@ export const InvoiceStore = {
   addInvoice(invoice) {
     invoices.push(invoice);
     saveInvoicesToLocalStorage();
-    invoiceStore.emit("change");
-  },
-
-  updateInvoice(updatedInvoice) {
-    invoices = invoices.map((invoice) =>
-      invoice.id === updatedInvoice.id ? updatedInvoice : invoice
-    );
-    saveInvoicesToLocalStorage();
-    invoiceStore.emit("change");
   },
 
   updateInvoiceStatus(id, status) {
@@ -32,21 +21,11 @@ export const InvoiceStore = {
       invoice.id === id ? { ...invoice, status } : invoice
     );
     saveInvoicesToLocalStorage();
-    invoiceStore.emit("change");
   },
 
   deleteInvoice(id) {
     invoices = invoices.filter((invoice) => invoice.id !== id);
     saveInvoicesToLocalStorage();
-    invoiceStore.emit("change");
-  },
-
-  addChangeListener(callback) {
-    invoiceStore.on("change", callback);
-  },
-
-  removeChangeListener(callback) {
-    invoiceStore.removeListener("change", callback);
   },
 };
 
@@ -57,8 +36,8 @@ dispatcher.register((action) => {
     case "ADD_INVOICE":
       InvoiceStore.addInvoice(action.invoice);
       break;
-    case "UPDATE_INVOICE":
-      InvoiceStore.updateInvoice(action.invoice);
+    case "UPDATE_INVOICE_STATUS":
+      InvoiceStore.updateInvoiceStatus(action.id, action.status);
       break;
     case "DELETE_INVOICE":
       InvoiceStore.deleteInvoice(action.id);
@@ -76,10 +55,11 @@ export const InvoiceActions = {
     });
   },
 
-  updateInvoice(invoice) {
+  updateInvoiceStatus(id, status) {
     dispatcher.dispatch({
-      type: "UPDATE_INVOICE",
-      invoice,
+      type: "UPDATE_INVOICE_STATUS",
+      id,
+      status,
     });
   },
 
