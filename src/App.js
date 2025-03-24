@@ -1,4 +1,4 @@
-import { Button, Col, Modal, Row } from "antd";
+import { Button, Col, message, Modal, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import Footer from "./components/Footer";
@@ -9,7 +9,6 @@ import { InvoiceStore } from "./stores/invoiceStore";
 
 export function App() {
   const [invoices, setInvoices] = useState([]);
-  const [currentTab, setCurrentTab] = useState("all_invoices");
   const [showAddInvoiceModal, setShowAddInvoiceModal] = useState(false);
 
   useEffect(() => {
@@ -26,7 +25,11 @@ export function App() {
     });
   };
 
-  const handleAfterSubmit = () => {};
+  const handleAfterSubmit = () => {
+    setShowAddInvoiceModal(false);
+    message.success("Invoice has been added successfully!");
+    refetchInvoices();
+  };
 
   const refetchInvoices = () => {
     const fetchedInvoices = InvoiceStore.getInvoices();

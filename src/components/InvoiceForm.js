@@ -223,7 +223,9 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
                     return (
                       <span>
                         {formatAmount(
-                          (values.quantity || 0) * (values.rate || 0).toFixed(2)
+                          ((values.quantity || 0) * (values.rate || 0)).toFixed(
+                            2
+                          )
                         )}
                       </span>
                     );
