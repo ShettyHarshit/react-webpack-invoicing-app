@@ -27,6 +27,14 @@ export const InvoiceStore = {
     invoiceStore.emit("change");
   },
 
+  updateInvoiceStatus(id, status) {
+    invoices = invoices.map((invoice) =>
+      invoice.id === id ? { ...invoice, status } : invoice
+    );
+    saveInvoicesToLocalStorage();
+    invoiceStore.emit("change");
+  },
+
   deleteInvoice(id) {
     invoices = invoices.filter((invoice) => invoice.id !== id);
     saveInvoicesToLocalStorage();
