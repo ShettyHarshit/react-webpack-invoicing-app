@@ -32,5 +32,5 @@ export const renderDate = (date) => {
 };
 
 export const formatAmount = (amount) => {
-  return `₹${Number.isInteger(amount) ? amount.toFixed(2) : amount}`;
+  return `₹${Number(amount).toFixed(2)}`;
 };

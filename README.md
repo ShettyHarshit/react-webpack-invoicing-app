@@ -1,10 +1,10 @@
 # Invoicing App
 
-This is a simple invoicing application built from scratch using React, Webpack, and Babel. The app allows users to create invoices, update their statuses, and view them with a clean, modern UI.
+This is a simple invoicing application built using React, Webpack, and Babel. The app allows users to create invoices, update their statuses, and view them.
 
 ## Description
 
-The application provides functionality to create and manage invoices with an intuitive and responsive interface. Users can create invoices, update their statuses, and store invoice data persistently using local storage. The UI is styled with Tailwind CSS, and state management is handled using Flux.
+The application provides functionality to create and manage invoices. Users can create invoices, update their statuses, and store invoice data persistently using local storage as a backend was not asked for. The UI is styled with Tailwind CSS and Ant Design for components, and state management is handled using Flux.
 
 ## Stack
 
@@ -43,5 +43,3 @@ Once the server is running, open your browser and visit:
 ```
 http://localhost:3000
 ```
-
-Enjoy using the invoicing app!
