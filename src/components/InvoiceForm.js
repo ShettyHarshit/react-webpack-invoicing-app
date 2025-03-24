@@ -68,9 +68,7 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
       <Form.Item
         label="Invoice Number"
         name="invoiceNumber"
-        rules={[
-          { required: true, message: "Please input the invoice number!" },
-        ]}
+        rules={[{ required: true, message: "Please input the invoice number" }]}
       >
         <Input className="w-full p-2 border border-gray-300 rounded" />
       </Form.Item>
@@ -80,7 +78,7 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
           <Form.Item
             label="Status"
             name="status"
-            rules={[{ required: true, message: "Please select the status!" }]}
+            rules={[{ required: true, message: "Please select the status" }]}
           >
             <Select className="w-full p-2 border border-gray-300 rounded capitalize">
               {[
@@ -101,7 +99,7 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
             label="Invoice Date"
             name="invoiceDate"
             rules={[
-              { required: true, message: "Please select the invoice date!" },
+              { required: true, message: "Please select the invoice date" },
             ]}
           >
             <DatePicker className="w-full p-2 border border-gray-300 rounded" />
@@ -111,7 +109,7 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
           <Form.Item
             label="Due Date"
             name="dueDate"
-            rules={[{ required: true, message: "Please select the due date!" }]}
+            rules={[{ required: true, message: "Please select the due date" }]}
           >
             <DatePicker className="w-full p-2 border border-gray-300 rounded" />
           </Form.Item>
@@ -129,7 +127,7 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
             label="Client Name"
             name="clientName"
             rules={[
-              { required: true, message: "Please input the client name!" },
+              { required: true, message: "Please input the client name" },
             ]}
           >
             <Input className="w-full p-2 border border-gray-300 rounded" />
@@ -140,8 +138,8 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
             label="Client Email"
             name="clientEmail"
             rules={[
-              { required: true, message: "Please input the client email!" },
-              { type: "email", message: "Please enter a valid email!" },
+              { required: true, message: "Please input the client email" },
+              { type: "email", message: "Please enter a valid email" },
             ]}
           >
             <Input className="w-full p-2 border border-gray-300 rounded" />
@@ -152,9 +150,7 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
       <Form.Item
         label="Client Address"
         name="clientAddress"
-        rules={[
-          { required: true, message: "Please input the client address!" },
-        ]}
+        rules={[{ required: true, message: "Please input the client address" }]}
       >
         <Input.TextArea className="w-full p-2 border border-gray-300 rounded" />
       </Form.Item>

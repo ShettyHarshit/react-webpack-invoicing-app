@@ -23,7 +23,7 @@ function InvoiceTable({ invoices, onModalOpen, refetchInvoices }) {
           render={renderDate}
         />
         <Table.Column
-          title="Amount"
+          title="Amounts"
           dataIndex="totalAmount"
           key="totalAmount"
           render={(totalAmount) => formatAmount(totalAmount)}
