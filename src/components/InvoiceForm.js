@@ -11,6 +11,7 @@ import {
 } from "antd";
 import React, { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { InvoiceStatuses } from "../constants/InvoiceStatuses";
 import { InvoiceStore } from "../stores/invoiceStore";
 
 const InvoiceForm = ({ handleAfterSubmit }) => {
@@ -80,11 +81,17 @@ const InvoiceForm = ({ handleAfterSubmit }) => {
             name="status"
             rules={[{ required: true, message: "Please select the status!" }]}
           >
-            <Select className="w-full p-2 border border-gray-300 rounded">
-              <Option value="draft">Draft</Option>
-              <Option value="sent">Sent</Option>
-              <Option value="paid">Paid</Option>
-              <Option value="overdue">Overdue</Option>
+            <Select className="w-full p-2 border border-gray-300 rounded capitalize">
+              {[
+                InvoiceStatuses.DRAFT,
+                InvoiceStatuses.SENT,
+                InvoiceStatuses.PAID,
+                InvoiceStatuses.OVERDUE,
+              ].map((status) => (
+                <Select.Option key={status} value={status}>
+                  {status}
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
         </Col>
