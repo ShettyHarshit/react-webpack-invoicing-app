@@ -1,31 +1,72 @@
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Table,
-  Tabs,
-} from "antd";
+import { Button, message, Modal, Select, Space, Table, Tabs, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import InvoiceForm from "./components/InvoiceForm";
 import { InvoiceStore } from "./stores/invoiceStore";
 
 export function App() {
   const [invoices, setInvoices] = useState([]);
   const [currentTab, setCurrentTab] = useState("all_invoices");
-  console.log("🚀 ~ App ~ invoices:", invoices);
 
   useEffect(() => {
     const fetchedInvoices = InvoiceStore.getInvoices();
     setInvoices(fetchedInvoices);
   }, []);
 
-  const addInvoice = () => {
-    const newInvoice = { id: Date.now(), name: "New Invoice" };
-    InvoiceStore.addInvoice(newInvoice);
-    setInvoices([...invoices, newInvoice]);
+  const onModalOpen = (text, record) => {
+    Modal.info({
+      title: `Invoice ${record.invoiceNumber}`,
+      content: (
+        <div>
+          <p>
+            <strong>Invoice Name:</strong> {record.name}
+          </p>
+          <p>
+            <strong>Total Amount:</strong> ₹{record.totalAmount}
+          </p>
+          <p>
+            <strong>Status:</strong> {record.status}
+          </p>
+          <p>
+            <strong>Invoice Date:</strong> {record.invoiceDate}
+          </p>
+          <p>
+            <strong>Due Date:</strong> {record.dueDate}
+          </p>
+          <p>
+            <strong>Client Name:</strong> {record.clientName}
+          </p>
+          <p>
+            <strong>Client Email:</strong> {record.clientEmail}
+          </p>
+          <p>
+            <strong>Client Address:</strong> {record.clientAddress}
+          </p>
+          <p>
+            <strong>Notes:</strong> {record.notes}
+          </p>
+          <h3>Line Items</h3>
+          <Table
+            dataSource={record.lineItems}
+            rowKey="description"
+            pagination={false}
+          >
+            <Table.Column
+              title="Description"
+              dataIndex="description"
+              key="description"
+            />
+            <Table.Column
+              title="Quantity"
+              dataIndex="quantity"
+              key="quantity"
+            />
+            <Table.Column title="Rate" dataIndex="rate" key="rate" />
+          </Table>
+        </div>
+      ),
+      onOk() {},
+    });
   };
 
   const items = [
@@ -42,8 +83,118 @@ export function App() {
             Add Invoice
           </Button>
           <Table dataSource={invoices} rowKey="id">
-            <Table.Column title="Invoice ID" dataIndex="id" key="id" />
-            <Table.Column title="Invoice Name" dataIndex="name" key="name" />
+            <Table.Column
+              title="Invoice ID"
+              dataIndex="invoiceNumber"
+              key="id"
+            />
+            <Table.Column title="Client" dataIndex="clientName" key="name" />
+            <Table.Column
+              title="Amount"
+              dataIndex="totalAmount"
+              key="totalAmount"
+              render={(totalAmount) => `₹${totalAmount}`}
+            />
+            <Table.Column
+              title="Status"
+              dataIndex="status"
+              key="status"
+              render={(status) => {
+                let color;
+                switch (status) {
+                  case "draft":
+                    color = "blue";
+                    break;
+                  case "sent":
+                    color = "orange";
+                    break;
+                  case "paid":
+                    color = "green";
+                    break;
+                  case "overdue":
+                    color = "red";
+                    break;
+                  default:
+                    color = "gray";
+                }
+                return <Tag color={color}>{status.toUpperCase()}</Tag>;
+              }}
+            />
+            <Table.Column
+              title="Action"
+              key="action"
+              render={(text, record) => (
+                <Space>
+                  <Button
+                    onClick={() => {
+                      onModalOpen(text, record);
+                    }}
+                  >
+                    View
+                  </Button>
+                  {record.status === "sent" || record.status == "overdue" ? (
+                    <Button
+                      onClick={() => {
+                        message.success(
+                          `Invoice ${record.invoiceNumber} marked as paid`
+                        );
+                        InvoiceStore.updateInvoiceStatus(record.id, "paid");
+                        const fetchedInvoices = InvoiceStore.getInvoices();
+                        setInvoices(fetchedInvoices);
+                      }}
+                    >
+                      Mark as Paid
+                    </Button>
+                  ) : null}
+                  {record.status === "sent" ? (
+                    <Button
+                      onClick={() => {
+                        message.warning(
+                          `Invoice ${record.invoiceNumber} marked as overdue`
+                        );
+                        InvoiceStore.updateInvoiceStatus(record.id, "overdue");
+                        const fetchedInvoices = InvoiceStore.getInvoices();
+                        setInvoices(fetchedInvoices);
+                      }}
+                    >
+                      Mark as Overdue
+                    </Button>
+                  ) : null}
+                  {record.status === "draft" && (
+                    <Button
+                      onClick={() => {
+                        message.success(
+                          `Invoice sent successfully for ${record.invoiceNumber} to ${record.clientEmail}`
+                        );
+                        InvoiceStore.updateInvoiceStatus(record.id, "sent");
+                        const fetchedInvoices = InvoiceStore.getInvoices();
+                        setInvoices(fetchedInvoices);
+                      }}
+                    >
+                      Send Invoice
+                    </Button>
+                  )}
+                  <Button
+                    danger
+                    onClick={() => {
+                      Modal.confirm({
+                        title: "Are you sure you want to delete this invoice?",
+                        onOk() {
+                          InvoiceStore.deleteInvoice(record.id);
+                          const fetchedInvoices = InvoiceStore.getInvoices();
+                          setInvoices(fetchedInvoices);
+                          message.success(
+                            `Invoice ${record.invoiceNumber} deleted successfully`
+                          );
+                        },
+                      });
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </Space>
+              )}
+            />
           </Table>
         </>
       ),
@@ -53,10 +204,8 @@ export function App() {
       label: "Create Invoice",
       children: (
         <InvoiceForm
-          onFinish={(invoice) => {
-            console.log("🚀 ~ App ~ invoice:", invoice);
-            // InvoiceStore.addInvoice(invoice);
-            // setInvoices([...invoices, invoice]);
+          handleAfterSubmit={() => {
+            setCurrentTab("all_invoices");
           }}
         />
       ),
@@ -70,7 +219,6 @@ export function App() {
         onChange={(key) => {
           setCurrentTab(key);
         }}
-        defaultActiveKey="all_invoices"
         activeKey={currentTab}
         items={items}
       />
@@ -78,111 +226,3 @@ export function App() {
   );
 }
 const { Option } = Select;
-
-const InvoiceForm = () => {
-  const onFinish = (values) => {
-    console.log("Form values: ", values);
-    InvoiceStore.addInvoice(values);
-  };
-
-  return (
-    <Form onFinish={onFinish} layout="vertical">
-      <Form.Item
-        label="Invoice Number"
-        name="invoiceNumber"
-        rules={[
-          { required: true, message: "Please input the invoice number!" },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="Status"
-        name="status"
-        rules={[{ required: true, message: "Please select the status!" }]}
-      >
-        <Select>
-          <Option value="paid">Paid</Option>
-          <Option value="unpaid">Unpaid</Option>
-          <Option value="pending">Pending</Option>
-        </Select>
-      </Form.Item>
-      <Form.Item label="Notes" name="notes" rules={[{ required: false }]}>
-        <Input.TextArea placeholder="Add any notes here, including payment instructions, where to send checks, etc." />
-      </Form.Item>
-      <Form.Item
-        label="Invoice Date"
-        name="invoiceDate"
-        rules={[{ required: true, message: "Please select the invoice date!" }]}
-      >
-        <DatePicker />
-      </Form.Item>
-      <Form.Item
-        label="Due Date"
-        name="dueDate"
-        rules={[{ required: true, message: "Please select the due date!" }]}
-      >
-        <DatePicker />
-      </Form.Item>
-      <Form.Item
-        label="Client Information"
-        name="clientInformation"
-        rules={[
-          { required: true, message: "Please input the client information!" },
-        ]}
-      >
-        <Input.TextArea />
-      </Form.Item>
-      <Form.List
-        name="lineItems"
-        rules={[
-          { required: true, message: "Please add at least one line item" },
-        ]}
-      >
-        {(fields, { add, remove }) => (
-          <>
-            {fields.map(({ key, name, fieldKey, ...restField }) => (
-              <div key={key} style={{ display: "flex", marginBottom: 8 }}>
-                <Form.Item
-                  {...restField}
-                  name={[name, "description"]}
-                  fieldKey={[fieldKey, "description"]}
-                  rules={[{ required: true, message: "Missing description" }]}
-                >
-                  <Input placeholder="Description" />
-                </Form.Item>
-                <Form.Item
-                  {...restField}
-                  name={[name, "quantity"]}
-                  fieldKey={[fieldKey, "quantity"]}
-                  rules={[{ required: true, message: "Missing quantity" }]}
-                >
-                  <InputNumber placeholder="Quantity" />
-                </Form.Item>
-                <Form.Item
-                  {...restField}
-                  name={[name, "rate"]}
-                  fieldKey={[fieldKey, "rate"]}
-                  rules={[{ required: true, message: "Missing rate" }]}
-                >
-                  <InputNumber placeholder="Rate" />
-                </Form.Item>
-                <Button type="danger" onClick={() => remove(name)}>
-                  Remove
-                </Button>
-              </div>
-            ))}
-            <Button type="dashed" onClick={() => add()} block>
-              Add Line Item
-            </Button>
-          </>
-        )}
-      </Form.List>
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
-  );
-};
